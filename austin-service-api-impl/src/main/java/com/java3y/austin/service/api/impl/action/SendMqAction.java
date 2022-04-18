@@ -9,20 +9,22 @@ import com.java3y.austin.common.vo.BasicResultVO;
 import com.java3y.austin.service.api.impl.domain.SendTaskModel;
 import com.java3y.austin.support.pipeline.BusinessProcess;
 import com.java3y.austin.support.pipeline.ProcessContext;
-import com.java3y.austin.support.utils.KafkaUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.producer.SendCallback;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * @author 3y
+ * @author sancijun
  * 将消息发送到MQ
  */
 @Slf4j
 public class SendMqAction implements BusinessProcess {
 
     @Autowired
-    private KafkaUtils kafkaUtils;
+    private RocketMQTemplate rocketMQTemplate;
 
     @Value("${austin.business.topic.name}")
     private String topicName;
@@ -33,11 +35,29 @@ public class SendMqAction implements BusinessProcess {
         String message = JSON.toJSONString(sendTaskModel.getTaskInfo(), new SerializerFeature[]{SerializerFeature.WriteClassName});
 
         try {
-            kafkaUtils.send(topicName, message);
+            this.send(message);
         } catch (Exception e) {
             context.setNeedBreak(true).setResponse(BasicResultVO.fail(RespStatusEnum.SERVICE_ERROR));
-            log.error("send kafka fail! e:{},params:{}", Throwables.getStackTraceAsString(e)
+            log.error("send rocketmq fail! e:{},params:{}", Throwables.getStackTraceAsString(e)
                     , JSON.toJSONString(CollUtil.getFirst(sendTaskModel.getTaskInfo().listIterator())));
         }
+    }
+
+    /**
+     * 发送 RocketMQ 消息
+     * @param jsonMessage
+     */
+    public void send(String jsonMessage) {
+        rocketMQTemplate.asyncSend(topicName, jsonMessage, new SendCallback() {
+            @Override
+            public void onSuccess(SendResult sendResult) {
+                log.info("send message to topic=[{}] sendResult=[{}]", topicName, sendResult);
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                log.error("send message to topic=[{}]", topicName, throwable);
+            }
+        });
     }
 }

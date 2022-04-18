@@ -11,8 +11,6 @@
         <module>austin-common</module>
         <module>austin-support</module>
         <module>austin-handler</module>
-        <module>austin-cron</module>
-        <module>austin-stream</module>
     </modules>
 
     <parent>
@@ -31,9 +29,7 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.14.3</flink.version>
         <target.java.version>1.8</target.java.version>
-        <scala.binary.version>2.11</scala.binary.version>
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.17.1</log4j.version>
@@ -42,6 +38,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--RocketMQ 依赖-->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>2.2.1</version>
+            </dependency>
             <!--mysql驱动包-->
             <dependency>
                 <groupId>mysql</groupId>
@@ -84,13 +86,6 @@
                 <version>3.1.390</version>
             </dependency>
 
-            <!--apollo-->
-            <dependency>
-                <groupId>com.ctrip.framework.apollo</groupId>
-                <artifactId>apollo-client-config-data</artifactId>
-                <version>1.9.1</version>
-            </dependency>
-
             <!--注解打印日志-->
             <dependency>
                 <groupId>cn.monitor4all</groupId>
@@ -110,47 +105,6 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>3.0.0</version>
-            </dependency>
-
-
-            <!--graylog-->
-            <dependency>
-                <groupId>de.siegmar</groupId>
-                <artifactId>logback-gelf</artifactId>
-                <version>3.0.0</version>
-            </dependency>
-
-            <!--xxl-job分布式定时任务-->
-            <dependency>
-                <groupId>com.xuxueli</groupId>
-                <artifactId>xxl-job-core</artifactId>
-                <version>2.3.0</version>
-            </dependency>
-
-            <!--flink相关依赖-->
-            <dependency>
-                <groupId>org.apache.flink</groupId>
-                <artifactId>flink-walkthrough-common_${scala.binary.version}</artifactId>
-                <version>${flink.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.flink</groupId>
-                <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
-                <version>${flink.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.flink</groupId>
-                <artifactId>flink-clients_${scala.binary.version}</artifactId>
-                <version>${flink.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!--kafkaFlink连接器-->
-            <dependency>
-                <groupId>org.apache.flink</groupId>
-                <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
-                <version>${flink.version}</version>
             </dependency>
 
             <!--微信服务号第三方SDK-->

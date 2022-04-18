@@ -8,6 +8,7 @@ import com.java3y.austin.common.dto.EnterpriseWeChatContentModel;
 import com.java3y.austin.common.enums.ChannelType;
 import com.java3y.austin.handler.handler.BaseHandler;
 import com.java3y.austin.handler.handler.Handler;
+import com.java3y.austin.handler.idempotent.Idempotent;
 import com.java3y.austin.support.utils.AccountUtils;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.api.WxCpService;
@@ -37,7 +38,7 @@ public class EnterpriseWeChatHandler extends BaseHandler implements Handler {
     /**
      * 账号信息
      */
-    private static final String ENTERPRISE_WECHAT_ACCOUNT_KEY = "enterpriseWechatAccount";
+    private static final String ENTERPRISE_WECHAT_ACCOUNT_KEY = "account.enterpriseWechatAccount";
     private static final String PREFIX = "enterprise_wechat_";
 
     @Autowired
@@ -48,12 +49,12 @@ public class EnterpriseWeChatHandler extends BaseHandler implements Handler {
     }
 
     @Override
+    @Idempotent(prefix = "austin", target = "taskInfo", subkeys = {"businessId", "receiver", "contentModel"})
     public boolean handler(TaskInfo taskInfo) {
         try {
             WxCpDefaultConfigImpl accountConfig = accountUtils.getAccount(taskInfo.getSendAccount(), ENTERPRISE_WECHAT_ACCOUNT_KEY, PREFIX, new WxCpDefaultConfigImpl());
             WxCpMessageServiceImpl messageService = new WxCpMessageServiceImpl(initService(accountConfig));
             WxCpMessageSendResult result = messageService.send(buildWxCpMessage(taskInfo, accountConfig.getAgentId()));
-            buildAnchorState(result);
             return true;
         } catch (Exception e) {
             log.error("EnterpriseWeChatHandler#handler fail:{},params:{}",
@@ -61,16 +62,6 @@ public class EnterpriseWeChatHandler extends BaseHandler implements Handler {
         }
         return false;
     }
-
-    /**
-     * 打点相关的信息记录
-     *
-     * @param result
-     */
-    private void buildAnchorState(WxCpMessageSendResult result) {
-
-    }
-
 
     /**
      * 初始化 WxCpServiceImpl 服务接口

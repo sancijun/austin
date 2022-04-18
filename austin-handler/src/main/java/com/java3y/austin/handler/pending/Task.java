@@ -3,7 +3,6 @@ package com.java3y.austin.handler.pending;
 
 import cn.hutool.core.collection.CollUtil;
 import com.java3y.austin.common.domain.TaskInfo;
-import com.java3y.austin.handler.deduplication.DeduplicationRuleService;
 import com.java3y.austin.handler.discard.DiscardMessageService;
 import com.java3y.austin.handler.handler.HandlerHolder;
 import com.java3y.austin.handler.shield.ShieldService;
@@ -34,9 +33,6 @@ public class Task implements Runnable {
     private HandlerHolder handlerHolder;
 
     @Autowired
-    private DeduplicationRuleService deduplicationRuleService;
-
-    @Autowired
     private DiscardMessageService discardMessageService;
 
     @Autowired
@@ -55,12 +51,7 @@ public class Task implements Runnable {
         // 1. 屏蔽消息
         shieldService.shield(taskInfo);
 
-        // 2.平台通用去重
-        if (CollUtil.isNotEmpty(taskInfo.getReceiver())) {
-            deduplicationRuleService.duplication(taskInfo);
-        }
-
-        // 3. 真正发送消息
+        // 2. 真正发送消息
         if (CollUtil.isNotEmpty(taskInfo.getReceiver())) {
             handlerHolder.route(taskInfo.getSendChannel()).doHandler(taskInfo);
         }

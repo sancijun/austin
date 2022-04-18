@@ -35,3 +35,7 @@ build/
 ### VS Code ###
 .vscode/
 
+/austin-admin/node_modules/
+/docker/data/
+/docker/logs/
+/docker/store/

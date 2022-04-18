@@ -37,7 +37,7 @@ import java.util.List;
 public class TencentSmsScript implements SmsScript {
 
     private static final Integer PHONE_NUM = 11;
-    private static final String SMS_ACCOUNT_KEY = "smsAccount";
+    private static final String SMS_ACCOUNT_KEY = "account.smsAccount";
     private static final String PREFIX = "sms_";
 
     @Autowired

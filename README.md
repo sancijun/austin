@@ -11,9 +11,14 @@
   <a href="#如何准备面试"><img src="https://img.shields.io/badge/如何准备-面试-yellow.svg" alt="对线面试官"></a>
 </p>
 
-
-
 ## 项目介绍
+本项目是 "三此君" 根据 "Java3y austin" 项目修改而来，用于演示 RocketMQ 项目实践及问题：
+1、kafka 替换为 RocketMQ
+2、主要为了展示 RocketMQ 项目实践及问题，尽量减少依赖项，故去掉 Apollo/xxl-job/graylog 等依赖。
+3、简化部署，更改 docker 模块，只需要一个命令即可部署好所有依赖的中间件。
+4、简化部署，austin/austin-admin 合并
+5、去掉原有的业务上的去重逻辑，新增 `通用幂等/重试` 实现。
+6、消费堆积处理
 
 austin项目**核心功能**：发送消息
 

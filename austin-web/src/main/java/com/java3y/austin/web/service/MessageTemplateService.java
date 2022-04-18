@@ -63,18 +63,4 @@ public interface MessageTemplateService {
      */
     void copy(Long id);
 
-    /**
-     * 启动模板的定时任务
-     * @param id
-     * @return
-     */
-    BasicResultVO startCronTask(Long id);
-
-    /**
-     * 暂停模板的定时任务
-     * @param id
-     * @return
-     */
-    BasicResultVO stopCronTask(Long id);
-
 }

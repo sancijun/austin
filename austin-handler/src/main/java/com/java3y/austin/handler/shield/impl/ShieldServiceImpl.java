@@ -40,12 +40,10 @@ public class ShieldServiceImpl implements ShieldService {
          */
         if (isNight()) {
             if (ShieldType.NIGHT_SHIELD.getCode().equals(taskInfo.getShieldType())) {
-                logUtils.print(AnchorInfo.builder().state(AnchorState.NIGHT_SHIELD.getCode()).businessId(taskInfo.getBusinessId()).ids(taskInfo.getReceiver()).build());
             }
             if (ShieldType.NIGHT_SHIELD_BUT_NEXT_DAY_SEND.getCode().equals(taskInfo.getShieldType())) {
                 redisUtils.lPush(NIGHT_SHIELD_BUT_NEXT_DAY_SEND_KEY, JSON.toJSONString(taskInfo, new SerializerFeature[]{SerializerFeature.WriteClassName}),
                         (DateUtil.offsetDay(new Date(), 1).getTime() / 1000) - DateUtil.currentSeconds());
-                logUtils.print(AnchorInfo.builder().state(AnchorState.NIGHT_SHIELD_NEXT_SEND.getCode()).businessId(taskInfo.getBusinessId()).ids(taskInfo.getReceiver()).build());
             }
             taskInfo.setReceiver(new HashSet<>());
         }

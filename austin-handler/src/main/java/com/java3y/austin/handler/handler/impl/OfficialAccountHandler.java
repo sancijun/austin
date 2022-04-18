@@ -7,6 +7,7 @@ import com.java3y.austin.common.dto.OfficialAccountsContentModel;
 import com.java3y.austin.common.enums.ChannelType;
 import com.java3y.austin.handler.handler.BaseHandler;
 import com.java3y.austin.handler.handler.Handler;
+import com.java3y.austin.handler.idempotent.Idempotent;
 import com.java3y.austin.handler.script.OfficialAccountService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -36,6 +37,7 @@ public class OfficialAccountHandler extends BaseHandler implements Handler {
     }
 
     @Override
+    @Idempotent(prefix = "austin", target = "taskInfo", subkeys = {"businessId", "receiver", "contentModel"})
     public boolean handler(TaskInfo taskInfo) {
 
         List<WxMpTemplateMessage> mpTemplateMessages = buildTemplateMsg(taskInfo);

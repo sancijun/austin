@@ -2,14 +2,10 @@ package com.java3y.austin.handler.discard;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
-import com.java3y.austin.common.constant.AustinConstant;
-import com.java3y.austin.common.domain.AnchorInfo;
 import com.java3y.austin.common.domain.TaskInfo;
-import com.java3y.austin.common.enums.AnchorState;
 import com.java3y.austin.support.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,8 +16,8 @@ import org.springframework.stereotype.Service;
 public class DiscardMessageService {
     private static final String DISCARD_MESSAGE_KEY = "discard";
 
-    @ApolloConfig("boss.austin")
-    private Config config;
+    @Value("${discard:[\"7\",\"8\"]}")
+    private String discard;
 
     @Autowired
     private LogUtils logUtils;
@@ -34,11 +30,9 @@ public class DiscardMessageService {
      */
     public boolean isDiscard(TaskInfo taskInfo) {
         // 配置示例:	["1","2"]
-        JSONArray array = JSON.parseArray(config.getProperty(DISCARD_MESSAGE_KEY,
-                AustinConstant.APOLLO_DEFAULT_VALUE_JSON_ARRAY));
+        JSONArray array = JSON.parseArray(discard);
 
         if (array.contains(String.valueOf(taskInfo.getMessageTemplateId()))) {
-            logUtils.print(AnchorInfo.builder().businessId(taskInfo.getBusinessId()).ids(taskInfo.getReceiver()).state(AnchorState.DISCARD.getCode()).build());
             return true;
         }
         return false;

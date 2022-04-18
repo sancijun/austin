@@ -20,12 +20,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogUtils extends CustomLogListener {
 
-    @Autowired
-    private KafkaUtils kafkaUtils;
-
-    @Value("${austin.business.log.topic.name}")
-    private String topicName;
-
     /**
      * 方法切面的日志 @OperationLog 所产生
      */
@@ -42,27 +36,4 @@ public class LogUtils extends CustomLogListener {
         log.info(JSON.toJSONString(logParam));
     }
 
-    /**
-     * 记录打点信息
-     */
-    public void print(AnchorInfo anchorInfo) {
-        anchorInfo.setTimestamp(System.currentTimeMillis());
-        String message = JSON.toJSONString(anchorInfo);
-        log.info(message);
-
-        try {
-            kafkaUtils.send(topicName, message);
-        } catch (Exception e) {
-            log.error("LogUtils#print kafka fail! e:{},params:{}", Throwables.getStackTraceAsString(e)
-                    , JSON.toJSONString(anchorInfo));
-        }
-    }
-
-    /**
-     * 记录当前对象信息和打点信息
-     */
-    public void print(LogParam logParam, AnchorInfo anchorInfo) {
-        print(anchorInfo);
-        print(logParam);
-    }
 }

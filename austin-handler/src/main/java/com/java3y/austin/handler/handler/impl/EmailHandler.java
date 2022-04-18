@@ -9,6 +9,7 @@ import com.java3y.austin.common.dto.EmailContentModel;
 import com.java3y.austin.common.enums.ChannelType;
 import com.java3y.austin.handler.handler.BaseHandler;
 import com.java3y.austin.handler.handler.Handler;
+import com.java3y.austin.handler.idempotent.Idempotent;
 import com.java3y.austin.support.utils.AccountUtils;
 import com.sun.mail.util.MailSSLSocketFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class EmailHandler extends BaseHandler implements Handler {
 
-    private static final String EMAIL_ACCOUNT_KEY = "emailAccount";
+    private static final String EMAIL_ACCOUNT_KEY = "account.emailAccount";
     private static final String PREFIX = "email_";
 
     @Autowired
@@ -34,7 +35,9 @@ public class EmailHandler extends BaseHandler implements Handler {
         channelCode = ChannelType.EMAIL.getCode();
     }
 
+    // 幂等？重试？
     @Override
+    @Idempotent(prefix = "austin", target = "taskInfo", subkeys = {"businessId", "receiver", "contentModel"})
     public boolean handler(TaskInfo taskInfo) {
         EmailContentModel emailContentModel = (EmailContentModel) taskInfo.getContentModel();
         MailAccount account = getAccountConfig(taskInfo.getSendAccount());

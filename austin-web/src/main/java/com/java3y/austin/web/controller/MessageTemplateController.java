@@ -135,25 +135,6 @@ public class MessageTemplateController {
         return BasicResultVO.success(response);
     }
 
-
-    /**
-     * 启动模板的定时任务
-     */
-    @PostMapping("start/{id}")
-    @ApiOperation("/启动模板的定时任务")
-    public BasicResultVO start(@RequestBody @PathVariable("id") Long id) {
-        return messageTemplateService.startCronTask(id);
-    }
-
-    /**
-     * 暂停模板的定时任务
-     */
-    @PostMapping("stop/{id}")
-    @ApiOperation("/暂停模板的定时任务")
-    public BasicResultVO stop(@RequestBody @PathVariable("id") Long id) {
-        return messageTemplateService.stopCronTask(id);
-    }
-
     /**
      * 上传人群文件
      */
